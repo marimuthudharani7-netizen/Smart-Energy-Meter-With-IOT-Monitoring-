@@ -1,0 +1,32 @@
+DISCRIPTION: The Solar Tracker System automatically adjusts the position of a solar panel to face the direction of maximum sunlight, increasing energy efficiency.
+It uses Light Dependent Resistors (LDRs) to detect sunlight intensity and a servo motor or DC motor controlled by Arduino/NodeMCU to rotate the panel.
+CODING:
+#include <Servo.h>
+
+Servo motor;
+int LDR1 = A0;  // Left LDR
+int LDR2 = A1;  // Right LDR
+
+void setup() {
+  motor.attach(9);  // Servo pin
+  Serial.begin(9600);
+}
+
+void loop() {
+  int left = analogRead(LDR1);
+  int right = analogRead(LDR2);
+
+  if(left > right + 50){          // Adjust threshold
+    motor.write(0);                // Turn left
+  }
+  else if(right > left + 50){
+    motor.write(180);              // Turn right
+  }
+  else{
+    motor.write(90);               // Stay center
+  }
+
+  Serial.print("Left: "); Serial.print(left);
+  Serial.print(" Right: "); Serial.println(right);
+  delay(1000);
+}
