@@ -1,0 +1,30 @@
+Discription: The Smart Energy Meter measures electrical energy consumption in real-time using a current sensor (like ACS712) and voltage measurement.
+The NodeMCU (ESP8266) sends the data via Wi-Fi to the Blynk App or ThingSpeak, allowing users to monitor energy usage remotely and receive alerts for high consumption.
+CIDUNG :
+#include <ESP8266WiFi.h>
+#include <BlynkSimpleEsp8266.h>
+
+#define BLYNK_AUTH_TOKEN "YourAuthToken"
+char auth[] = BLYNK_AUTH_TOKEN;
+char ssid[] = "YourWiFi";
+char pass[] = "YourPassword";
+
+#define currentPin A0
+
+void setup() {
+  Serial.begin(115200);
+  Blynk.begin(auth, ssid, pass);
+}
+
+void loop() {
+  Blynk.run();
+
+  float sensorValue = analogRead(currentPin);
+  float current = (sensorValue - 512) * (5.0 / 1024.0) / 0.185; // ACS712 5A formula
+  float power = current * 230;  // Assuming 230V mains
+
+  Blynk.virtualWrite(V1, current);
+  Blynk.virtualWrite(V2, power);
+
+  delay(1000);
+}
